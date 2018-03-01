@@ -97,7 +97,11 @@ describe('main', () => {
       })
     })
 
-    let circuitBreaker = new CircuitBreaker(fn)
+    // smaller timeouts for faster tests
+    let circuitBreaker = new CircuitBreaker(fn, {
+      callTimeoutMs: 100,
+      resetTimeoutMs: 1000
+    })
 
     try {
       await circuitBreaker.call()
@@ -120,9 +124,13 @@ describe('main', () => {
       })
     })
 
-    let circuitBreaker = new CircuitBreaker(fn)
+    // smaller timeouts for faster tests
+    let circuitBreaker = new CircuitBreaker(fn, {
+      callTimeoutMs: 100,
+      resetTimeoutMs: 1000
+    })
 
-    // In 15 seconds, while CircuitBreaker state is OPEN
+    // In 15 callTimeoutMs, while CircuitBreaker state is OPEN
     // make another attempt, that should receive an error
     setTimeout(async () => {
       log('15 second timeout executed')
@@ -134,9 +142,9 @@ describe('main', () => {
         expect(err).toEqual(new Error('CIRCUIT_IS_OPEN'))
         expect(circuitBreaker.state).toBe(states.OPEN)
       }
-    }, 15 * 1000)
+    }, 15 * circuitBreaker.callTimeoutMs)
 
-    // 25 seconds after the start of the test,
+    // 25 callTimeoutMs after the start of the test,
     // the API becomes responsive again
     // allowing original request to resolve
     setTimeout(() => {
@@ -146,9 +154,9 @@ describe('main', () => {
           setTimeout(resolve, 100, 1)
         })
       })
-    }, 25 * 1000)
+    }, 25 * circuitBreaker.callTimeoutMs)
 
-    // 30 seconds after the start of the test,
+    // 30 callTimeoutMs after the start of the test,
     // another call is made, the state should be
     // HALF_OPEN, and result in a success
     // and the state becoming CLOSED
@@ -164,7 +172,7 @@ describe('main', () => {
       } catch (err) {
         if (err) log('ERROR IN TEST')
       }
-    }, 25 * 1000)
+    }, 25 * circuitBreaker.callTimeoutMs)
 
     // This is the first request
     // the 3rd party server will be offline
