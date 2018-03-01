@@ -10,7 +10,7 @@
     "lint:fix": "eslint --fix src __tests__",
     "test": "jest --config jest.json --coverage --verbose",
     "test:watch": "jest --config jest.json --watchAll",
-    "precommit": "npm run lint:fix && npm run test",
+    "precommit": "npm run lint && npm run test",
     "prepublish": "npm run build"
   },
   "author": "",

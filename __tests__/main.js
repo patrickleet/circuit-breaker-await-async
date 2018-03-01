@@ -38,7 +38,7 @@ describe('main', () => {
       if (e) console.log(e)
     }
   })
-  
+
   // it('circuitbreaker.call success', () => {
   //   let fn = jest.fn(() => {
   //     return new Promise(function(resolve, reject) {
@@ -50,7 +50,7 @@ describe('main', () => {
 
   //   let circuitbreaker = new CircuitBreaker(fn)
   //   expect(typeof circuitbreaker.call).toBe('function')
-    
+
   //   circuitbreaker.call(fn, (err, result) => {
   //     if (err) console.log(err)
   //     expect(result).toBe(1)
@@ -68,7 +68,7 @@ describe('main', () => {
   //   })
 
   //   circuitbreaker.call(fn, (err, result) => {
-  //     if (err) console.error(err) 
+  //     if (err) console.error(err)
   //     expect(err).toEqual(new Error('CIRCUIT_IS_OPEN'))
   //     done()
   //   })
