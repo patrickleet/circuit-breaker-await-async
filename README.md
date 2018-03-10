@@ -2,6 +2,8 @@
 [![codecov](https://codecov.io/gh/patrickleet/circuit-breaker-await-async/branch/master/graph/badge.svg)](https://codecov.io/gh/patrickleet/circuit-breaker-await-async)
 
 # circuit-breaker-await-async
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/patrickleet/circuit-breaker-await-async.svg)](https://greenkeeper.io/)
 ES6 circuit breaker built around await/async patterns
 
 Usage:
