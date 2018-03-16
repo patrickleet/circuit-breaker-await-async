@@ -7,7 +7,7 @@ const log = debug('circuit-breaker-await-async:tests')
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 60 * 1000
 
 describe('main', () => {
-  it('exists', () => {
+  it('constructor', () => {
     expect(CircuitBreaker).toBeDefined()
     let circuitBreaker
     expect(() => {
@@ -86,6 +86,28 @@ describe('main', () => {
     }
   })
 
+  it('circuitBreaker.call with HALF_OPEN state and failing async call', async (done) => {
+    log('Starting test 3...')
+    let fn = jest.fn(() => {
+      // mock async call using Promise
+      return new Promise((resolve, reject) => {
+        setTimeout(reject, 100, new Error('Server Error'))
+      })
+    })
+    let circuitBreaker = new CircuitBreaker(fn, {
+      state: states.HALF_OPEN
+    })
+
+    try {
+      await circuitBreaker.call()
+    } catch (e) {
+      if (e) log(e)
+      expect(e).toEqual(new Error('CIRCUIT_IS_OPEN'))
+      expect(circuitBreaker.state).toBe(states.OPEN)
+      done()
+    }
+  })
+
   it('circuitBreaker.call errors after 10 failures', async (done) => {
     log('Starting end to end test')
 
@@ -113,7 +135,7 @@ describe('main', () => {
     }
   })
 
-  it('circuitBreaker.call 10 failures trips the circuit breaker, further requests receive CIRCUIT_IS_OPEN error.', async (done) => {
+  it('circuitBreaker.call - end to end', async (done) => {
     log('Starting end to end test')
 
     // Let's start with simulating a non-working API
