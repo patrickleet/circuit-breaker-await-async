@@ -36,25 +36,39 @@ export class CircuitBreaker extends EventEmitter {
     this.currentAttempt = 0
     this.resetAttempt = 0
 
-    this.on('circuit-breaker.call', async () => {
+    this.on('circuit-breaker.call', async ({ state } = {}) => {
       log('circuit-breaker.call received')
+      const isHalfOpen = state === states.HALF_OPEN
+      if (isHalfOpen) {
+        this.currentAttempt = this.maxFailures - 1
+      }
+
       if (this.currentAttempt < this.maxFailures) {
         try {
-          this.currentAttempt++
-          log(`Attempt ${this.currentAttempt} Started`)
+          if (isHalfOpen) {
+            log(`HalfOpen trial call`)
+          } else {
+            this.currentAttempt++
+            log(`Attempt ${this.currentAttempt} Started`)
+          }
           let result = await this.fn()
           this.emit('circuit-breaker.call.succeeded', result)
         } catch (e) {
-          log(`Attempt ${this.currentAttempt} Failed`)
-          // attempt again in callTimeoutMs
-          setTimeout(() => {
-            this.emit('circuit-breaker.call')
-          }, this.callTimeoutMs)
+          if (isHalfOpen) {
+            log('HalfOpen trail called has failed')
+            this.emit('circuit-breaker.trip')
+            this.emit('circuit-breaker.call.failed', new Error(errors.CIRCUIT_IS_OPEN))
+          } else {
+            log(`Attempt ${this.currentAttempt} Failed`)
+            // attempt again in callTimeoutMs
+            setTimeout(() => {
+              this.emit('circuit-breaker.call')
+            }, this.callTimeoutMs)
+          }
         }
       } else {
         log('Calls to your function have failed 10 times in a row. Tripping the circuit to prevent more incoming requests.')
         this.emit('circuit-breaker.trip')
-
         this.emit('circuit-breaker.call.failed', new Error(errors.CIRCUIT_IS_OPEN))
 
         // in resetTimeoutMs, attempt resetting the circuit
@@ -77,14 +91,13 @@ export class CircuitBreaker extends EventEmitter {
     this.on('circuit-breaker.attempt-reset', async () => {
       log('attempting to reset circuit breaker')
       this.state = states.HALF_OPEN
-      this.currentAttempt = 0
     })
   }
 
   call() {
-    const doCall = () => {
+    const doCall = ({ state }) => {
       return new Promise((resolve, reject) => {
-        this.emit('circuit-breaker.call')
+        this.emit('circuit-breaker.call', { state })
 
         this.on('circuit-breaker.call.succeeded', (result) => {
           resolve(result)
@@ -108,7 +121,7 @@ export class CircuitBreaker extends EventEmitter {
     switch (this.state) {
     case states.CLOSED:
     case states.HALF_OPEN:
-      return doCall()
+      return doCall({state: this.state})
 
     case states.OPEN:
       return rejectCall()
