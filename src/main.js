@@ -70,11 +70,6 @@ export class CircuitBreaker extends EventEmitter {
         log('Calls to your function have failed 10 times in a row. Tripping the circuit to prevent more incoming requests.')
         this.emit('circuit-breaker.trip')
         this.emit('circuit-breaker.call.failed', new Error(errors.CIRCUIT_IS_OPEN))
-
-        // in resetTimeoutMs, attempt resetting the circuit
-        setTimeout(() => {
-          this.emit('circuit-breaker.attempt-reset')
-        }, this.resetTimeoutMs)
       }
     })
 
@@ -86,6 +81,11 @@ export class CircuitBreaker extends EventEmitter {
     this.on('circuit-breaker.trip', async () => {
       log('tripping circuitbreaker')
       this.state = states.OPEN
+
+      // in resetTimeoutMs, attempt resetting the circuit
+      setTimeout(() => {
+        this.emit('circuit-breaker.attempt-reset')
+      }, this.resetTimeoutMs)
     })
 
     this.on('circuit-breaker.attempt-reset', async () => {
