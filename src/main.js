@@ -55,11 +55,11 @@ export class CircuitBreaker extends EventEmitter {
           this.emit('circuit-breaker.call.succeeded', result)
         } catch (e) {
           if (isHalfOpen) {
-            log('HalfOpen trail called has failed')
+            log(`HalfOpen trail called has failed: ${e.message}`)
             this.emit('circuit-breaker.trip')
             this.emit('circuit-breaker.call.failed', new Error(errors.CIRCUIT_IS_OPEN))
           } else {
-            log(`Attempt ${this.currentAttempt} Failed`)
+            log(`Attempt ${this.currentAttempt} Failed: ${e.message}`)
             // attempt again in callTimeoutMs
             setTimeout(() => {
               this.emit('circuit-breaker.call')
