@@ -121,7 +121,7 @@ export class CircuitBreaker extends EventEmitter {
     switch (this.state) {
     case states.CLOSED:
     case states.HALF_OPEN:
-      return doCall({state: this.state})
+      return doCall({ state: this.state })
 
     case states.OPEN:
       return rejectCall()

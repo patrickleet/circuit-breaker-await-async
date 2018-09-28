@@ -160,7 +160,7 @@ describe('main', () => {
         expect(circuitBreaker.state).toBe(states.OPEN)
         await circuitBreaker.call()
       } catch (err) {
-        if (err) log({msg: 'Expected error has occurred while the circuit is open'})
+        if (err) log({ msg: 'Expected error has occurred while the circuit is open' })
         expect(err).toEqual(new Error('CIRCUIT_IS_OPEN'))
         expect(circuitBreaker.state).toBe(states.OPEN)
       }
