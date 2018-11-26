@@ -17,3 +17,5 @@ try {
   // ...
 }
 ```
+
+Works with any `fn` that returns a promise
