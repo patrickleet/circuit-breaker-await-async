@@ -1,30 +1,32 @@
+
 language: node_js
-cache:
-  directories:
-    - "~/.npm"
+node_js:
+  - 8
+  - 10
+  - 12
+
 notifications:
   email: false
-node_js:
-  - 9
-  - 10
+
 before_install:
-  # package-lock.json was introduced in npm@5
-  - '[[ $(node -v) =~ ^v9.*$ ]] || npm install -g npm@latest' # skipped when using node 9
-  - npm install -g greenkeeper-lockfile@1
-install:
-  - npm install
   - npm install -g codecov
-before_script: greenkeeper-lockfile-update
 script:
-  - npm run lint
-  - npm run test
+  - npm test
   - codecov
-after_script: greenkeeper-lockfile-upload
-after_success:
-  - npm run travis-deploy-once "npm run semantic-release"
+
 branches:
   except:
-    - "/^v\\d+\\.\\d+\\.\\d+$/"
+    - '/^v\d+\.\d+\.\d+$/'
+
+jobs:
+  include:
+    - stage: deploy
+      if: branch == master && !fork
+      node_js: node # pre-installed version
+      script:
+        - npm install -g semantic-release
+        - semantic-release
+
 env:
   global:
     secure: VUuSiMSkj1n6NdcMiDaPjSJBVvRTozhkXfsLaZE4f3bdE9IR1xEdUSdMT83yC0VBttVCpN7olqakzHx0WxHdKDjjL/oxvV8OLQzrChBFu8+SME8EC/U4a9w7WU4df4lhfUg6K40e4516Up39OiELnMAh5gzR+jpmxCvDFm/1UufE0e9TUvl0CCFRyhAgBYJvw6eXB1chCzuJuFkUyEJE7ac3+GAoYD/0YfSKX9hes7aS+dO68FsVu3pfAxOILAUy8VmUSaqekC+xabIZLKh/Gbsb9GQJkTMoONJu97CtXx75Td2tXY77YbCAasz/2QxIOB3Zbv+P/JnFhUZf1AG/uueO7Ftj2JTbbtea2Gzs1+T7Gi+5pzL1ooVypO5400NuHqZJNtsk5GVkubzNxFG3dhAapy6DMg4rW6CHMRvyf2P9+FOHC/+s9W5D0KXZfblK5hS89AmvB4LMt1Uy5aSJw7GbZSHPS0VVCA0FFHFnsyYXCfy9HjMhgcQcaZ8KH84AAPHfjFWkd1IVDaY74WY8mbSVyyppFUZzBHXdY9/ZluwZG7cJxg/nu8LLJCMHoqTltg0krBmpMySH87Z+Z6yr4o7ZwRSj1Zgo94AhmGyvaATvJDbiWeXzGXnVJBxpRSv+X4N/nvg+LWd9Jg+7Ve4wX4Hrv64exVKztDYGaPJ5JrM=
