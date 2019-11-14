@@ -36,7 +36,7 @@ export class CircuitBreaker extends EventEmitter {
     this.currentAttempt = 0
     this.resetAttempt = 0
 
-    this.on('circuit-breaker.call', async ({ state } = {}) => {
+    this.on('circuit-breaker.call', async ({ args, state } = {}) => {
       log('circuit-breaker.call received')
       const isHalfOpen = state === states.HALF_OPEN
       if (isHalfOpen) {
@@ -51,7 +51,7 @@ export class CircuitBreaker extends EventEmitter {
             this.currentAttempt++
             log(`Attempt ${this.currentAttempt} Started`)
           }
-          let result = await this.fn()
+          let result = await this.fn(...args)
           this.emit('circuit-breaker.call.succeeded', result)
         } catch (e) {
           if (isHalfOpen) {
@@ -95,9 +95,11 @@ export class CircuitBreaker extends EventEmitter {
   }
 
   call() {
-    const doCall = ({ state }) => {
+    const args = arguments
+
+    const doCall = ({ args, state }) => {
       return new Promise((resolve, reject) => {
-        this.emit('circuit-breaker.call', { state })
+        this.emit('circuit-breaker.call', { args, state })
 
         this.on('circuit-breaker.call.succeeded', (result) => {
           resolve(result)
@@ -121,7 +123,7 @@ export class CircuitBreaker extends EventEmitter {
     switch (this.state) {
     case states.CLOSED:
     case states.HALF_OPEN:
-      return doCall({ state: this.state })
+      return doCall({ args, state: this.state })
 
     case states.OPEN:
       return rejectCall()

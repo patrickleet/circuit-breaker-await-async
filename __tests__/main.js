@@ -208,4 +208,26 @@ describe('main', () => {
       expect(circuitBreaker.state).toEqual(states.OPEN)
     }
   })
+
+  it('circuitBreaker.call - with arguments', async (done) => {
+    log('Starting arguments test')
+
+    log('Starting test 1...')
+    let fn = jest.fn((one, two, three) => {
+      // mock async call using Promise
+      return new Promise((resolve, reject) => {
+        setTimeout(resolve, 100, [one, two, three])
+      })
+    })
+    let circuitBreaker = new CircuitBreaker(fn)
+
+    try {
+      let result = await circuitBreaker.call(1, 2, 3)
+      expect(result).toStrictEqual([1, 2, 3])
+      expect(circuitBreaker.state).toBe(states.CLOSED)
+      done()
+    } catch (e) {
+      if (e) log(e)
+    }
+  })
 })
