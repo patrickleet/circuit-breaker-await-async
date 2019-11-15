@@ -230,4 +230,31 @@ describe('main', () => {
       if (e) log(e)
     }
   })
+
+  it('circuitBreaker.call errors preserves args between calls', async (done) => {
+    log('Starting end to end test')
+
+    // Let's start with simulating a non-working API
+    let fn = jest.fn((one, two, three) => {
+      // mock async call using Promise
+      return new Promise((resolve, reject) => {
+        setTimeout(reject, 1, new Error('Server Error', [one, two, three]))
+      })
+    })
+
+    // smaller timeouts for faster tests
+    let circuitBreaker = new CircuitBreaker(fn, {
+      callTimeoutMs: 100,
+      resetTimeoutMs: 1000
+    })
+
+    try {
+      await circuitBreaker.call(1, 2, 3)
+    } catch (err) {
+      log('expected error after 10 attempts')
+      expect(err).toEqual(new Error('CIRCUIT_IS_OPEN', [1, 2, 3]))
+      expect(circuitBreaker.state).toEqual(states.OPEN)
+      done()
+    }
+  })
 })
