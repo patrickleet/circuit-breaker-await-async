@@ -32,6 +32,7 @@ export class CircuitBreaker extends EventEmitter {
     this.resetTimeoutMs = resetTimeoutMs
 
     this.state = state
+    this.errors = []
 
     this.currentAttempt = 0
     this.resetAttempt = 0
@@ -56,6 +57,7 @@ export class CircuitBreaker extends EventEmitter {
           let result = await this.fn(...args)
           this.emit('circuit-breaker.call.succeeded', result)
         } catch (e) {
+          this.errors.push(e)
           if (isHalfOpen) {
             log(`HalfOpen trail called has failed: ${e.message}`)
             this.emit('circuit-breaker.trip')
@@ -71,7 +73,7 @@ export class CircuitBreaker extends EventEmitter {
       } else {
         log('Calls to your function have failed 10 times in a row. Tripping the circuit to prevent more incoming requests.')
         this.emit('circuit-breaker.trip')
-        this.emit('circuit-breaker.call.failed', new Error(errors.CIRCUIT_IS_OPEN))
+        this.emit('circuit-breaker.call.failed', new Error(`${errors.CIRCUIT_IS_OPEN} - the following errors occurred: ${this.errors}`))
       }
     }
 

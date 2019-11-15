@@ -129,7 +129,7 @@ describe('main', () => {
       await circuitBreaker.call()
     } catch (err) {
       log('expected error after 10 attempts')
-      expect(err).toEqual(new Error('CIRCUIT_IS_OPEN'))
+      expect(err.toString().indexOf('CIRCUIT_IS_OPEN')).toBeGreaterThan(-1)
       expect(circuitBreaker.state).toEqual(states.OPEN)
       done()
     }
@@ -204,7 +204,7 @@ describe('main', () => {
       await circuitBreaker.call()
     } catch (err) {
       log('expected error after 10 attempts')
-      expect(err).toEqual(new Error('CIRCUIT_IS_OPEN'))
+      expect(err.toString().indexOf('CIRCUIT_IS_OPEN')).toBeGreaterThan(-1)
       expect(circuitBreaker.state).toEqual(states.OPEN)
     }
   })
@@ -238,7 +238,7 @@ describe('main', () => {
     let fn = jest.fn((one, two, three) => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
-        setTimeout(reject, 1, new Error('Server Error', [one, two, three]))
+        setTimeout(reject, 1, new Error(`Server Error ${[one, two, three]}`))
       })
     })
 
@@ -251,8 +251,9 @@ describe('main', () => {
     try {
       await circuitBreaker.call(1, 2, 3)
     } catch (err) {
-      log('expected error after 10 attempts')
-      expect(err).toEqual(new Error('CIRCUIT_IS_OPEN', [1, 2, 3]))
+      log('expected error after 10 attempts', err)
+      expect(err.toString().indexOf('CIRCUIT_IS_OPEN')).toBeGreaterThan(-1)
+      expect(err.toString().indexOf('Server Error 1,2,3')).toBeGreaterThan(-1)
       expect(circuitBreaker.state).toEqual(states.OPEN)
       done()
     }
