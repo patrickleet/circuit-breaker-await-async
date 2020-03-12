@@ -39,7 +39,7 @@
     "eslint-plugin-standard": "4.0.1",
     "husky": "2.7.0",
     "jest": "24.9.0",
-    "regenerator-runtime": "0.13.3"
+    "regenerator-runtime": "0.13.5"
   },
   "repository": {
     "type": "git",
