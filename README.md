@@ -1,8 +1,8 @@
 # circuit-breaker-await-async
 
-[![Build Status](https://travis-ci.org/patrickleet/circuit-breaker-await-async.svg?branch=master)](https://travis-ci.org/patrickleet/circuit-breaker-await-async)
+[![Release](https://github.com/patrickleet/circuit-breaker-await-async/actions/workflows/release.yml/badge.svg)](https://github.com/patrickleet/circuit-breaker-await-async/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/patrickleet/circuit-breaker-await-async/branch/master/graph/badge.svg)](https://codecov.io/gh/patrickleet/circuit-breaker-await-async)
-[![Greenkeeper badge](https://badges.greenkeeper.io/patrickleet/circuit-breaker-await-async.svg)](https://greenkeeper.io/)
+
 
 ES6 circuit breaker built around await/async patterns
 
