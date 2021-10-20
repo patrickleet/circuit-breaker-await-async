@@ -12,7 +12,7 @@ describe('main', () => {
     }).toThrow()
 
     expect(() => {
-      let fn = jest.fn()
+      const fn = jest.fn()
       circuitBreaker = new CircuitBreaker(fn)
       expect(typeof circuitBreaker.call).toBe('function')
     }).not.toThrow()
@@ -22,16 +22,16 @@ describe('main', () => {
 
   it('circuitBreaker.call with CLOSED state', async () => {
     log('Starting test 1...')
-    let fn = jest.fn(() => {
+    const fn = jest.fn(() => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(resolve, 100, 1)
       })
     })
-    let circuitBreaker = new CircuitBreaker(fn)
+    const circuitBreaker = new CircuitBreaker(fn)
 
     try {
-      let result = await circuitBreaker.call()
+      const result = await circuitBreaker.call()
       expect(result).toBe(1)
       expect(circuitBreaker.state).toBe(states.CLOSED)
     } catch (e) {
@@ -41,18 +41,18 @@ describe('main', () => {
 
   it('circuitBreaker.call with OPEN state', async () => {
     log('Starting test 2...')
-    let fn = jest.fn(() => {
+    const fn = jest.fn(() => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(resolve, 100, 1)
       })
     })
-    let circuitBreaker = new CircuitBreaker(fn, {
+    const circuitBreaker = new CircuitBreaker(fn, {
       state: states.OPEN
     })
 
     try {
-      let r = await circuitBreaker.call()
+      const r = await circuitBreaker.call()
       console.log(r)
     } catch (e) {
       expect(e).toEqual(new Error(errors.CIRCUIT_IS_OPEN))
@@ -61,18 +61,18 @@ describe('main', () => {
 
   it('circuitBreaker.call with HALF_OPEN state', async () => {
     log('Starting test 3...')
-    let fn = jest.fn(() => {
+    const fn = jest.fn(() => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(resolve, 100, 1)
       })
     })
-    let circuitBreaker = new CircuitBreaker(fn, {
+    const circuitBreaker = new CircuitBreaker(fn, {
       state: states.HALF_OPEN
     })
 
     try {
-      let result = await circuitBreaker.call()
+      const result = await circuitBreaker.call()
       expect(result).toBe(1)
       expect(circuitBreaker.state).toBe(states.CLOSED)
     } catch (e) {
@@ -82,13 +82,13 @@ describe('main', () => {
 
   it('circuitBreaker.call with HALF_OPEN state and failing async call', async () => {
     log('Starting test 3...')
-    let fn = jest.fn(() => {
+    const fn = jest.fn(() => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(reject, 100, new Error('Server Error'))
       })
     })
-    let circuitBreaker = new CircuitBreaker(fn, {
+    const circuitBreaker = new CircuitBreaker(fn, {
       state: states.HALF_OPEN
     })
 
@@ -105,7 +105,7 @@ describe('main', () => {
     log('Starting end to end test')
 
     // Let's start with simulating a non-working API
-    let fn = jest.fn(() => {
+    const fn = jest.fn(() => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(reject, 1, new Error('Server Error'))
@@ -113,7 +113,7 @@ describe('main', () => {
     })
 
     // smaller timeouts for faster tests
-    let circuitBreaker = new CircuitBreaker(fn, {
+    const circuitBreaker = new CircuitBreaker(fn, {
       callTimeoutMs: 100,
       resetTimeoutMs: 1000
     })
@@ -131,7 +131,7 @@ describe('main', () => {
     log('Starting end to end test')
 
     // Let's start with simulating a non-working API
-    let fn = jest.fn(() => {
+    const fn = jest.fn(() => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(reject, 1, new Error('Server Error'))
@@ -139,7 +139,7 @@ describe('main', () => {
     })
 
     // smaller timeouts for faster tests
-    let circuitBreaker = new CircuitBreaker(fn, {
+    const circuitBreaker = new CircuitBreaker(fn, {
       callTimeoutMs: 100,
       resetTimeoutMs: 1000
     })
@@ -179,7 +179,7 @@ describe('main', () => {
       try {
         expect(circuitBreaker.state).toBe(states.HALF_OPEN)
         log('hello')
-        let result = await circuitBreaker.call()
+        const result = await circuitBreaker.call()
         expect(result).toBe(1)
         expect(circuitBreaker.state).toBe(states.CLOSED)
       } catch (err) {
@@ -204,16 +204,16 @@ describe('main', () => {
     log('Starting arguments test')
 
     log('Starting test 1...')
-    let fn = jest.fn((one, two, three) => {
+    const fn = jest.fn((one, two, three) => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(resolve, 100, [one, two, three])
       })
     })
-    let circuitBreaker = new CircuitBreaker(fn)
+    const circuitBreaker = new CircuitBreaker(fn)
 
     try {
-      let result = await circuitBreaker.call(1, 2, 3)
+      const result = await circuitBreaker.call(1, 2, 3)
       expect(result).toStrictEqual([1, 2, 3])
       expect(circuitBreaker.state).toBe(states.CLOSED)
     } catch (e) {
@@ -225,7 +225,7 @@ describe('main', () => {
     log('Starting end to end test')
 
     // Let's start with simulating a non-working API
-    let fn = jest.fn((one, two, three) => {
+    const fn = jest.fn((one, two, three) => {
       // mock async call using Promise
       return new Promise((resolve, reject) => {
         setTimeout(reject, 1, new Error(`Server Error ${[one, two, three]}`))
@@ -233,7 +233,7 @@ describe('main', () => {
     })
 
     // smaller timeouts for faster tests
-    let circuitBreaker = new CircuitBreaker(fn, {
+    const circuitBreaker = new CircuitBreaker(fn, {
       callTimeoutMs: 100,
       resetTimeoutMs: 1000
     })
