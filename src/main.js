@@ -14,7 +14,7 @@ export const errors = {
 }
 
 export class CircuitBreaker extends EventEmitter {
-  constructor(fn, {
+  constructor (fn, {
     state = states.CLOSED,
     maxFailures = 10,
     callTimeoutMs = 1 * 1000,
@@ -103,7 +103,7 @@ export class CircuitBreaker extends EventEmitter {
     this.on('circuit-breaker.attempt-reset', handleAttemptedReset)
   }
 
-  call() {
+  call () {
     this.args = arguments
 
     const doCall = ({ state }) => {
@@ -130,12 +130,12 @@ export class CircuitBreaker extends EventEmitter {
     }
 
     switch (this.state) {
-    case states.CLOSED:
-    case states.HALF_OPEN:
-      return doCall({ args: this.args, state: this.state })
+      case states.CLOSED:
+      case states.HALF_OPEN:
+        return doCall({ args: this.args, state: this.state })
 
-    case states.OPEN:
-      return rejectCall()
+      case states.OPEN:
+        return rejectCall()
     }
   }
 }
