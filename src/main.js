@@ -49,12 +49,12 @@ export class CircuitBreaker extends EventEmitter {
       if (this.currentAttempt < this.maxFailures) {
         try {
           if (isHalfOpen) {
-            log(`HalfOpen trial call`)
+            log('HalfOpen trial call')
           } else {
             this.currentAttempt++
             log(`Attempt ${this.currentAttempt} Started`)
           }
-          let result = await this.fn(...args)
+          const result = await this.fn(...args)
           this.emit('circuit-breaker.call.succeeded', result)
         } catch (e) {
           this.errors.push(e)
@@ -120,7 +120,7 @@ export class CircuitBreaker extends EventEmitter {
       })
     }
 
-    let rejectCall = () => {
+    const rejectCall = () => {
       return new Promise((resolve, reject) => {
         // State is open
         // reject
