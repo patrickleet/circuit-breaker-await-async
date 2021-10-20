@@ -10,9 +10,9 @@
     "lint:fix": "eslint --fix src __tests__",
     "test": "DEBUG=circuit-breaker-await-async* jest --config jest.json --coverage --verbose",
     "test:watch": "DEBUG=circuit-breaker-await-async* jest --config jest.json --watchAll",
-    "precommit": "npm run lint && npm run test",
     "prepublish": "npm run build",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepare": "husky install"
   },
   "author": "Patrick Scott <pat@patscott.io>",
   "license": "ISC",
@@ -23,7 +23,7 @@
     "babel-cli": "6.26.0",
     "babel-core": "6.26.3",
     "babel-eslint": "10.1.0",
-    "babel-jest": "24.9.0",
+    "babel-jest": "27.3.1",
     "babel-plugin-module-resolver": "4.1.0",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-preset-env": "1.7.0",
@@ -36,13 +36,17 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "5.1.0",
     "eslint-plugin-standard": "4.1.0",
-    "husky": "2.7.0",
-    "jest": "26.6.3",
+    "husky": "^7.0.2",
+    "jest": "27.3.1",
+    "lint-staged": "^11.2.3",
     "regenerator-runtime": "0.13.9",
     "semantic-release": "18.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/patrickleet/circuit-breaker-await-async.git"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix"
   }
 }

@@ -14,5 +14,6 @@
   },
   "collectCoverageFrom" : [
     "src/**/*.js"
-  ]
+  ],
+  "testTimeout": 60000
 }

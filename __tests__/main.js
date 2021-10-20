@@ -3,9 +3,6 @@ import { CircuitBreaker, states, errors } from 'main'
 
 const log = debug('circuit-breaker-await-async:tests')
 
-// default timeout is 5 seconds...
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 60 * 1000
-
 describe('main', () => {
   it('constructor', () => {
     expect(CircuitBreaker).toBeDefined()
@@ -23,7 +20,7 @@ describe('main', () => {
     expect(circuitBreaker).toBeDefined()
   })
 
-  it('circuitBreaker.call with CLOSED state', async (done) => {
+  it('circuitBreaker.call with CLOSED state', async () => {
     log('Starting test 1...')
     let fn = jest.fn(() => {
       // mock async call using Promise
@@ -37,13 +34,12 @@ describe('main', () => {
       let result = await circuitBreaker.call()
       expect(result).toBe(1)
       expect(circuitBreaker.state).toBe(states.CLOSED)
-      done()
     } catch (e) {
       if (e) log(e)
     }
   })
 
-  it('circuitBreaker.call with OPEN state', async (done) => {
+  it('circuitBreaker.call with OPEN state', async () => {
     log('Starting test 2...')
     let fn = jest.fn(() => {
       // mock async call using Promise
@@ -60,11 +56,10 @@ describe('main', () => {
       console.log(r)
     } catch (e) {
       expect(e).toEqual(new Error(errors.CIRCUIT_IS_OPEN))
-      done()
     }
   })
 
-  it('circuitBreaker.call with HALF_OPEN state', async (done) => {
+  it('circuitBreaker.call with HALF_OPEN state', async () => {
     log('Starting test 3...')
     let fn = jest.fn(() => {
       // mock async call using Promise
@@ -80,13 +75,12 @@ describe('main', () => {
       let result = await circuitBreaker.call()
       expect(result).toBe(1)
       expect(circuitBreaker.state).toBe(states.CLOSED)
-      done()
     } catch (e) {
       if (e) log(e)
     }
   })
 
-  it('circuitBreaker.call with HALF_OPEN state and failing async call', async (done) => {
+  it('circuitBreaker.call with HALF_OPEN state and failing async call', async () => {
     log('Starting test 3...')
     let fn = jest.fn(() => {
       // mock async call using Promise
@@ -104,11 +98,10 @@ describe('main', () => {
       if (e) log(e)
       expect(e).toEqual(new Error('CIRCUIT_IS_OPEN'))
       expect(circuitBreaker.state).toBe(states.OPEN)
-      done()
     }
   })
 
-  it('circuitBreaker.call errors after 10 failures', async (done) => {
+  it('circuitBreaker.call errors after 10 failures', async () => {
     log('Starting end to end test')
 
     // Let's start with simulating a non-working API
@@ -131,11 +124,10 @@ describe('main', () => {
       log('expected error after 10 attempts')
       expect(err.toString().indexOf('CIRCUIT_IS_OPEN')).toBeGreaterThan(-1)
       expect(circuitBreaker.state).toEqual(states.OPEN)
-      done()
     }
   })
 
-  it('circuitBreaker.call - end to end', async (done) => {
+  it('circuitBreaker.call - end to end', async () => {
     log('Starting end to end test')
 
     // Let's start with simulating a non-working API
@@ -190,7 +182,6 @@ describe('main', () => {
         let result = await circuitBreaker.call()
         expect(result).toBe(1)
         expect(circuitBreaker.state).toBe(states.CLOSED)
-        done()
       } catch (err) {
         if (err) log('ERROR IN TEST')
       }
@@ -209,7 +200,7 @@ describe('main', () => {
     }
   })
 
-  it('circuitBreaker.call - with arguments', async (done) => {
+  it('circuitBreaker.call - with arguments', async () => {
     log('Starting arguments test')
 
     log('Starting test 1...')
@@ -225,13 +216,12 @@ describe('main', () => {
       let result = await circuitBreaker.call(1, 2, 3)
       expect(result).toStrictEqual([1, 2, 3])
       expect(circuitBreaker.state).toBe(states.CLOSED)
-      done()
     } catch (e) {
       if (e) log(e)
     }
   })
 
-  it('circuitBreaker.call errors preserves args between calls', async (done) => {
+  it('circuitBreaker.call errors preserves args between calls', async () => {
     log('Starting end to end test')
 
     // Let's start with simulating a non-working API
@@ -255,7 +245,6 @@ describe('main', () => {
       expect(err.toString().indexOf('CIRCUIT_IS_OPEN')).toBeGreaterThan(-1)
       expect(err.toString().indexOf('Server Error 1,2,3')).toBeGreaterThan(-1)
       expect(circuitBreaker.state).toEqual(states.OPEN)
-      done()
     }
   })
 })
