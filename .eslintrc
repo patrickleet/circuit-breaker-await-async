@@ -4,12 +4,8 @@
     "es6": true
   },
   "extends": "standard",
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true,
-      "jsx": true
-    },
     "sourceType": "module"
   },
   "plugins": [],
@@ -26,16 +22,5 @@
     "jasmine": true,
     "beforeAll": true,
     "afterAll": true
-  },
-  "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "space-before-function-paren": 0
   }
 }
