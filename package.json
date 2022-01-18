@@ -39,7 +39,7 @@
     "jest": "27.4.7",
     "lint-staged": "12.1.7",
     "regenerator-runtime": "0.13.9",
-    "semantic-release": "18.0.1"
+    "semantic-release": "19.0.2"
   },
   "repository": {
     "type": "git",
