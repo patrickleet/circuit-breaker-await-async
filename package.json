@@ -17,7 +17,7 @@
   "author": "Patrick Scott <pat@patscott.io>",
   "license": "ISC",
   "dependencies": {
-    "debug": "4.3.4"
+    "debug": "4.4.0"
   },
   "devDependencies": {
     "@babel/cli": "7.17.6",
